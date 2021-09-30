@@ -1,57 +1,75 @@
 import random
 
-def createRandomPassword():
+def createRandomPassword(numberOfCharacters,includeLowerCharacters,includeUpperCharacters,includeIntegers,includeSymbols):
+    
+    lowerCaseAlphabet="abcdefghijklmnopqrstuvwxyz"
+    upperCaseAlphabet="ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    symbols="!@#$%?&*"
+    inclusions = [includeLowerCharacters,includeUpperCharacters,includeIntegers,includeSymbols]
+    numberOfDifferentCharacters=sum(inclusions)
 
-    inclusions = []
+    if numberOfCharacters>=numberOfDifferentCharacters:
 
-    includeUpperCharacters=inclusions.append(bool(input("upper characters?")))
-    includeLowerCharacters=inclusions.append(bool(input("lower characters?")))
-    includeIntegers=inclusions.append(bool(input("integers?")))
-    includeSymbols=inclusions.append(bool(input("symbols?")))
+        def getRandomLowerCharacter():
+            return(random.choice(lowerCaseAlphabet))
 
-    def getRandomLowerCharacter():
-        lowerCaseAlphabet="abcdefghijklmnopqrstuvwxyz"
-        return(random.choice(lowerCaseAlphabet))
+        def getRandomUpperCharacter():
+            return(random.choice(upperCaseAlphabet))
 
-    def getRandomUpperCharacter():
-        upperCaseAlphabet="ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-        return(random.choice(upperCaseAlphabet))
+        def getRandomInteger():
+            return(random.randint(0,9))
 
-    def getRandomInteger():
-        return(random.randint(0,9))
+        def getRandomSymbol():
+            return(random.choice(symbols))
 
-    def getRandomSymbol():
-        symbols="!@#$%?&*"
-        return(random.choice(symbols))
-
-    characterCreation=[getRandomLowerCharacter,getRandomUpperCharacter,getRandomInteger,getRandomSymbol]
-
-    numberOfCharacters=int(input("how many characters:"))
-    password=""
-
-    #numberOfDifferentCharacters=sum(inclusions)
-
-    #for inclusion in inclusions:
-        #if inclusion:
-            #numberOfDifferentCharacters+=1
-
-    for iteration in range(numberOfCharacters):
-        choiceOfNewCharacter=[]
+        def containsLowerCharacter(currentPassword):
+            return(any(character for character in currentPassword if character.islower()))
         
+        def containsUpperCharacter(currentPassword):
+            return(any(character for character in currentPassword if character.isupper()))
 
-        for iteration, inclusion in enumerate(inclusions):
-            choiceOfNewCharacter.append(characterCreation[iteration]())
-                
-        """
-        for iteration, inclusion in enumerate(inclusions):
-            for differentCharacter in range(numberOfDifferentCharacters):
-                if password[-differentCharacter] 
+        def containsInteger(currentPassword):
+            return(any(character for character in currentPassword if character.isdigit()))
 
-        """
+        def containsSymbol(currentPassword):
+            check = False
+            for character in currentPassword:
+                for symbol in symbols:
+                    if character==symbol:
+                        check=True
+            return(check)
 
-        newCharacter=random.choice(choiceOfNewCharacter)
+        password=""
+
+        characterCreation=[getRandomLowerCharacter,getRandomUpperCharacter,getRandomInteger,getRandomSymbol]
+        characterChecks=[containsLowerCharacter,containsUpperCharacter,containsInteger,containsSymbol]
+
+
+        for iteration in range(numberOfCharacters):
+            choiceOfNewCharacter=[]
+
+            if ((numberOfCharacters-iteration)-numberOfDifferentCharacters)<0:
+                for iteration, inclusion in enumerate(inclusions):
+                    print(characterChecks[iteration](password))
+                    if inclusion and not characterChecks[iteration](password):
+                        choiceOfNewCharacter.append(characterCreation[iteration]())
+                if not choiceOfNewCharacter:
+                    for iteration, inclusion in enumerate(inclusions):
+                        if inclusion:
+                            choiceOfNewCharacter.append(characterCreation[iteration]())
+            else:
+                for iteration, inclusion in enumerate(inclusions):
+                    if inclusion:
+                        choiceOfNewCharacter.append(characterCreation[iteration]())
+
+            print(choiceOfNewCharacter)
+            print(password)
+            newCharacter=random.choice(choiceOfNewCharacter)
+            
+            password=password+str(newCharacter)
+        print(password)
+
+    else:
+        return(None)
         
-        password=password+str(newCharacter)
-    print(password)
-
-    #def containsLower():
+createRandomPassword(5,bool(True),bool(True),bool(True),bool(True))
